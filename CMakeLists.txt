@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
 project(
         photon
-        VERSION 0.7
+        VERSION 0.8
         LANGUAGES C CXX ASM
 )
 
@@ -390,3 +390,16 @@ if (PHOTON_BUILD_TESTING)
     endif ()
     GenerateStandaloneCTestScript(${CMAKE_SOURCE_DIR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/CTestTestfile.cmake)
 endif ()
+
+################################################################################
+
+# Install headers and libs
+add_custom_target(copy_includes ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR}/include
+    COMMENT "Copying include files to build directory: ${CMAKE_BINARY_DIR}/include"
+)
+add_dependencies(copy_includes photon_static)
+
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
+install(TARGETS photon_shared DESTINATION lib)
+install(FILES ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/libphoton.a DESTINATION lib)
